@@ -13,16 +13,15 @@ void setup()
 {
   frames[0].HardwareInit();
 
-  //DDRB = 254;	//All outputs except B0, the "OFF/SELECT" button.
-  //PORTB |= 1;   // Turn on PortB Pin 0 pull up!
+//  DDRB = 254;	//All outputs except B0, the "OFF/SELECT" button.
+//  PORTB |= 1;   // Turn on PortB Pin 0 pull up!
 
   Wire.begin(2);        // join i2c bus (address optional for master)
   Wire.onReceive(receiveEvent); // register event
-  
-  if(DEBUG){
-    Serial.begin(9600);
-  }
 
+   if(DEBUG){
+     //Serial.begin(9600);
+   }
 }
 
 void receiveEvent(int howMany)
@@ -56,7 +55,7 @@ void loop()
   for(int i=0; i < MAX_BALL_COUNT; i++){
     updateBall(&balls[i]);
   }
-
+/*
   if(isSleep()){
   //if(true){
     if(!isSleepMode){
@@ -68,7 +67,9 @@ void loop()
     else {
       drawScreenSaver();
     }
-  } else {
+  } else 
+  */
+  {
     // active //
     isSleepMode = false;
     //frames[0].Clear();
@@ -92,6 +93,7 @@ void loop()
   refreshAll();
 }
 
+/*
 boolean isSleep(){
   for(int i=0; i < MAX_BALL_COUNT; i++){
     if(balls[i].isActive){
@@ -125,6 +127,7 @@ void drawScreenSaver(){
     }
   }
 }
+  */
 
 void drawBright(){
   for(int i= 0; i < MAX_BRIGHT_COUNT; i++){
@@ -274,9 +277,27 @@ void clearFrames(){
 }
 
 void setPointWithBrightness(unsigned short xIn, unsigned short yIn, unsigned short brightness){
+ 
+  unsigned short x,y;
+  if(xIn >= NUM_OF_X || yIn >= NUM_OF_Y){
+    return;
+  }
   // transform the point to roppongi format.
-  x = rMatrix[xIn][yIn].x;
-  y = rMatrix[xIn][yIn].y;
+  Point pt;
+  if( yIn < 8 && xIn < 41 ){
+    pt = rMatrix[yIn][xIn];
+  }else {
+    return;
+  }
+  y = pt.x;
+  x = pt.y;
+
+  if(DEBUG){
+    Serial.print("\n x: ");
+    Serial.print(x);
+    Serial.print(" y: ");
+    Serial.print(y);
+  }
   
   x += X_AXIS_OFFSET;
   y += Y_AXIS_OFFSET;

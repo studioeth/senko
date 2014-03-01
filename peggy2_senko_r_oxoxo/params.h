@@ -4,7 +4,7 @@
 
 #define MAX_VELOCITY 2 // initial speed of the ball. 
 #define DISAPPEAR_THRESHOLD 0.01
-#define NUM_OF_X 36
+#define NUM_OF_X 41
 #define NUM_OF_Y 8
 #define X_AXIS_OFFSET 4
 #define Y_AXIS_OFFSET 4
@@ -90,5 +90,4 @@ Sensor sensors[NUM_OF_SENSOR] = {
   {0x08, 11,  8, false}, // ち
   {0x09,  7,  8, false}  // り
 };
-
 
