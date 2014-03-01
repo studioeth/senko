@@ -1,10 +1,6 @@
 /* 
   oxoxo [zero by zero] Senko for Peggy 2.0, using the Peggy2 library, version 0.2. 
-  TODO: speed and brightness of displaying circle.
-  [Done] センサーの場所に人が来た時に、ピカっとさせる
-  [Done] 玉同士がぶつかったところが光り続けるのがバグに見える　4秒で消す
-  [Done] 玉ができてから消えるまでの時間を減らす　スピードももっと落とす
-  cross / screen saver
+  http://oxoxo.me
 */
 
 #include <Peggy2.h>
