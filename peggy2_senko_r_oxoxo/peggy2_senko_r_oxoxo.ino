@@ -20,7 +20,7 @@ void setup()
   Wire.onReceive(receiveEvent); // register event
 
    if(DEBUG){
-     //Serial.begin(9600);
+     //Serial.begin(19200);
    }
 }
 
@@ -293,26 +293,35 @@ void setPointWithBrightness(unsigned short xIn, unsigned short yIn, unsigned sho
   x = pt.y;
 
   if(DEBUG){
-    Serial.print("\n x: ");
+    Serial.print("\n xIn: ");
+    Serial.print(xIn);
+    Serial.print(" yIn: ");
+    Serial.print(yIn);
+    Serial.print("\n   x: ");
     Serial.print(x);
-    Serial.print(" y: ");
+    Serial.print("   y: ");
     Serial.print(y);
   }
-  
+
   x += X_AXIS_OFFSET;
   y += Y_AXIS_OFFSET;
-  if(x < X_AXIS_OFFSET || x > NUM_OF_X + X_AXIS_OFFSET || y < Y_AXIS_OFFSET || y > NUM_OF_Y + Y_AXIS_OFFSET){
-    return;
-  }
-  
-  frames[0].WritePoint( x, y, brightness & 1);
-  frames[1].WritePoint( x, y, brightness & 2);
-  frames[2].WritePoint( x, y, brightness & 4);
-  frames[3].WritePoint( x, y, brightness & 8);
-  frames[4].WritePoint( x, y, brightness & 16);
-  frames[5].WritePoint( x, y, brightness & 32);
-  // frames[6].WritePoint( x, y, brightness & 64);
 
+
+  if(NORMALMODE){
+    if(brightness > 0){
+      frames[0].WritePoint( x, y, 1);
+    }else{
+      frames[0].WritePoint( x, y, 0);
+    }    
+  }else{
+    frames[0].WritePoint( x, y, brightness & 1);
+    frames[1].WritePoint( x, y, brightness & 2);
+    frames[2].WritePoint( x, y, brightness & 4);
+    frames[3].WritePoint( x, y, brightness & 8);
+    frames[4].WritePoint( x, y, brightness & 16);
+    frames[5].WritePoint( x, y, brightness & 32);
+    // frames[6].WritePoint( x, y, brightness & 64);
+  }
 }
 
 void refreshAll(){
@@ -320,13 +329,18 @@ void refreshAll(){
   unsigned short reps = 0;  
   while (reps < repNumber)
   {
-    frames[0].RefreshAllFast(1); //Draw frame buffer 1 time
-    frames[1].RefreshAllFast(2); //Draw frame buffer 2 times
-    frames[2].RefreshAllFast(4); //Draw frame buffer 4 times
-    frames[3].RefreshAllFast(8); //Draw frame buffer 8 times 
-    frames[4].RefreshAllFast(16); //Draw frame buffer 4 times 
-    frames[5].RefreshAllFast(32); //Draw frame buffer 4 times 
-   // frames[6].RefreshAllFast(64); //Draw frame buffer 4 times 
+    if(NORMALMODE){
+      frames[0].RefreshAll(50); //Draw frame buffer 1 time
+    }
+    else{
+      frames[0].RefreshAllFast(1); //Draw frame buffer 1 time
+      frames[1].RefreshAllFast(2); //Draw frame buffer 2 times
+      frames[2].RefreshAllFast(4); //Draw frame buffer 4 times
+      frames[3].RefreshAllFast(8); //Draw frame buffer 8 times 
+      frames[4].RefreshAllFast(16); //Draw frame buffer 4 times 
+      frames[5].RefreshAllFast(32); //Draw frame buffer 4 times 
+     // frames[6].RefreshAllFast(64); //Draw frame buffer 4 times 
+    }
     reps++;
   }
 }

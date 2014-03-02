@@ -1,5 +1,5 @@
 #define DEBUG 0 // 1 true / 0 false
-
+#define NORMALMODE 0
 #define byte uint8_t
 
 #define MAX_VELOCITY 2 // initial speed of the ball. 
@@ -26,7 +26,7 @@
 
 Peggy2 frames[NUM_OF_FRAMES];     // Make a frame buffer object, called frames[0] 
 
-unsigned short repNumber = 1;
+unsigned short repNumber = 2;
 bool isSleepMode = false;
 bool shouldFadeInLoad = true;
 unsigned long sleepStartMillis = 0;
