@@ -8,13 +8,13 @@
 #define NUM_OF_Y 8
 #define X_AXIS_OFFSET 4
 #define Y_AXIS_OFFSET 4
-#define MODERATION_RATIO 0.90
+#define MODERATION_RATIO 0.92
 
-#define MAX_BALL_COUNT 8
-#define MAX_BALL_AGE 300 // TODO
+#define MAX_BALL_COUNT 16
+#define MAX_BALL_AGE 400 // TODO
+#define DEFAULT_BRIGHT_AGE 25 //TODO
 #define MAX_BALL_BRIGHTNESS 50
 
-#define DEFAULT_BRIGHT_AGE 15
 #define MAX_BRIGHT_BRIGHTNESS 63 // depending on RefleshAll() 
 #define MAX_BRIGHT_BRIGHTNESS_SLEEP 32
 #define MAX_BRIGHT_COUNT 8
@@ -36,7 +36,8 @@ struct Bright {
       uint8_t yp;
       uint8_t xp;
       int age;
-      int spread;
+      int spreadMax;
+      bool isOneWay;
     };
 
 struct Ball {
@@ -51,6 +52,14 @@ struct Ball {
     };
 
 Ball balls [MAX_BALL_COUNT] = { 
+  {0,0,0,0,false,0,0,0},
+  {0,0,0,0,false,0,0,0},
+  {0,0,0,0,false,0,0,0},
+  {0,0,0,0,false,0,0,0},
+  {0,0,0,0,false,0,0,0},
+  {0,0,0,0,false,0,0,0},
+  {0,0,0,0,false,0,0,0},
+  {0,0,0,0,false,0,0,0},
   {0,0,0,0,false,0,0,0},
   {0,0,0,0,false,0,0,0},
   {0,0,0,0,false,0,0,0},

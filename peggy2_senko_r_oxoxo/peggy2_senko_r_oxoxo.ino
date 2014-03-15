@@ -50,7 +50,8 @@ void loop()
     if(sensors[i].isRequested){
       Ball* pBall = createBall(sensors[i].x, sensors[i].y); // might be ignored if no ball is available.
       if(pBall != NULL){
-        fireBright(pBall, sensors[i].x * 2);
+        //fireBright(pBall, sensors[i].x * 2, true);
+        fireBright(pBall, 5, true);
       }
       sensors[i].isRequested = false;
     }
@@ -87,7 +88,9 @@ void loop()
       for(int j=i+1; j < MAX_BALL_COUNT; j++){
         if(balls[i].xp == balls[j].xp && balls[i].yp == balls[j].yp
           && balls[i].isActive && balls[j].isActive ){
-          fireBright(&balls[i], DEFAULT_BRIGHT_AGE);
+          //TODO ball age
+          float power = (MAX_BALL_AGE * 2 - balls[i].age - balls[j].age) / (float)(MAX_BALL_AGE * 2);
+          fireBright(&balls[i], (int)(DEFAULT_BRIGHT_AGE * power), true);
           break;
         }
       }
@@ -136,18 +139,23 @@ void drawScreenSaver(){
 void drawBright(){
   for(int i= 0; i < MAX_BRIGHT_COUNT; i++){
     if(brights[i].isActive){
-      int brightness = calcBallBrightnessFromAge(brights[i].age, MAX_BRIGHT_BRIGHTNESS, MAX_BALL_AGE);
+      int currentSpread = brights[i].age;
+      int brightness = calcBallBrightnessFromAge(currentSpread, MAX_BRIGHT_BRIGHTNESS, brights[i].spreadMax);
       setPointWithBrightness(brights[i].xp, brights[i].yp, brightness); 
       brights[i].age++;
-      int currentSpread = brights[i].age;
-      if(currentSpread > brights[i].xp && currentSpread < brights[i].spread){
-        currentSpread = brights[i].xp * 2 - currentSpread; // ちょっと手前で折り返す
+      if(brights[i].isOneWay){
+      }else{
+        if(currentSpread > brights[i].xp && currentSpread < brights[i].spreadMax){
+          currentSpread = brights[i].xp * 2 - currentSpread; // ちょっと手前で折り返す
+        }
+        //brightness = MAX_BRIGHT_BRIGHTNESS;
+        brightness = calcBallBrightnessFromAge(currentSpread, MAX_BRIGHT_BRIGHTNESS, DEFAULT_BRIGHT_AGE);
       }
       if(currentSpread < NUM_OF_X){
-        drawCircle(brights[i].xp, brights[i].yp, currentSpread, MAX_BRIGHT_BRIGHTNESS);
+        drawCircle(brights[i].xp, brights[i].yp, currentSpread, brightness);
       }
     }
-    if(brights[i].age > brights[i].spread){
+    if(brights[i].age > brights[i].spreadMax){
       // delete Bright.
       brights[i].isActive = false;
       brights[i].age = 0;
@@ -163,7 +171,7 @@ struct Ball* createBall(uint8_t x, uint8_t y){
     }
     
     //Set first velocity
-    pBall->vx = ( MAX_VELOCITY * random(80, 100)) / 100.0;
+    pBall->vx = ( MAX_VELOCITY * random(-100, 100)) / 100.0;
     int vec = random(0, 1);
     if(vec == 0){
       vec = -1;
@@ -265,14 +273,15 @@ void updateBall(struct Ball* pBall){
 
 }
 
-void fireBright(struct Ball* pBall, int spread){
+void fireBright(struct Ball* pBall, int spreadMax, bool isOneWay){
   for(int i= 0; i < MAX_BRIGHT_COUNT; i++){
     if(!brights[i].isActive){
        brights[i].xp = pBall->xp;
        brights[i].yp = pBall->yp;
        brights[i].isActive = true;
        brights[i].age = 0;
-       brights[i].spread = spread;
+       brights[i].spreadMax = spreadMax;
+       brights[i].isOneWay = isOneWay;
        break;
     }
   }
