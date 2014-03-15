@@ -60,7 +60,6 @@ void loop()
   for(int i=0; i < MAX_BALL_COUNT; i++){
     updateBall(&balls[i]);
   }
-/*
   if(isSleep()){
   //if(true){
     if(!isSleepMode){
@@ -73,7 +72,6 @@ void loop()
       drawScreenSaver();
     }
   } else 
-  */
   {
     // active //
     isSleepMode = false;
@@ -100,7 +98,6 @@ void loop()
   refreshAll();
 }
 
-/*
 boolean isSleep(){
   for(int i=0; i < MAX_BALL_COUNT; i++){
     if(balls[i].isActive){
@@ -115,6 +112,35 @@ boolean isSleep(){
   return true;
 }
 
+unsigned short x1 = 0; 
+unsigned short y1 = 0;    
+unsigned short x2 = 20; 
+unsigned short y2 = 4;    
+
+void drawScreenSaver(){
+  clearFrames();
+  showLine(&x1,&y1);
+  showLine(&x2,&y2);
+}
+
+void showLine(unsigned short* px, unsigned short* py){
+  (*px)++;
+  if((*px) >= 45){
+    (*px)=0;
+    (*py)++;
+    if((*py) >= 8){
+      (*py) = 0;
+    }
+  }
+  setPointWithBrightness((*px), (*py), MAX_BRIGHT_BRIGHTNESS);  
+  setPointWithBrightness((*px)-1, (*py), 20);  
+  setPointWithBrightness((*px)-2, (*py), 10);  
+  setPointWithBrightness((*px)-3, (*py), 5);  
+  setPointWithBrightness((*px)-4, (*py), 1);  
+
+}
+
+ /*
 void drawScreenSaver(){
   unsigned long sleepDuration = millis() - sleepStartMillis;
   if(sleepDuration > SCREEN_SAVER_START_MSEC){
