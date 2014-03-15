@@ -1,7 +1,7 @@
 
 struct Point {
-  unsigned char y;
-  unsigned char x;
+  byte y;
+  byte x;
   };
 
 Point rMatrix[8][41] = {

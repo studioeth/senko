@@ -1,5 +1,5 @@
 #define DEBUG 0 // 1 true / 0 false
-#define NORMALMODE 0
+#define NORMALMODE 0 // NORMALMODE uses RefreshAll() 
 #define byte uint8_t
 
 #define MAX_VELOCITY 2 // initial speed of the ball. 
@@ -8,13 +8,13 @@
 #define NUM_OF_Y 8
 #define X_AXIS_OFFSET 4
 #define Y_AXIS_OFFSET 4
-#define MODERATION_RATIO 0.96
+#define MODERATION_RATIO 0.90
 
 #define MAX_BALL_COUNT 8
-#define MAX_BALL_AGE 1000
+#define MAX_BALL_AGE 300 // TODO
 #define MAX_BALL_BRIGHTNESS 50
 
-#define MAX_BRIGHT_AGE 200
+#define DEFAULT_BRIGHT_AGE 15
 #define MAX_BRIGHT_BRIGHTNESS 63 // depending on RefleshAll() 
 #define MAX_BRIGHT_BRIGHTNESS_SLEEP 32
 #define MAX_BRIGHT_COUNT 8
@@ -26,7 +26,7 @@
 
 Peggy2 frames[NUM_OF_FRAMES];     // Make a frame buffer object, called frames[0] 
 
-unsigned short repNumber = 2;
+unsigned char repNumber = 2;
 bool isSleepMode = false;
 bool shouldFadeInLoad = true;
 unsigned long sleepStartMillis = 0;
@@ -36,6 +36,7 @@ struct Bright {
       uint8_t yp;
       uint8_t xp;
       int age;
+      int spread;
     };
 
 struct Ball {
@@ -78,16 +79,16 @@ struct Sensor {
   bool isRequested;
 };
 
-// TODO x and y should be changed according to actual sensor position.
 Sensor sensors[NUM_OF_SENSOR] = {
-  {0x01,  7,  0, false}, // い
-  {0x02,  0,  8, false}, // ろ
-  {0x03,  7, 15, false}, // は
-  {0x04, 15,  8, false}, // に
-  {0x05,  7,  4, false}, // ほ
-  {0x06,  3,  8, false}, // へ
-  {0x07,  8, 12, false}, // と
-  {0x08, 11,  8, false}, // ち
-  {0x09,  7,  8, false}  // り
+  //      y    x
+  {0x01,  28,  3, false}, // い
+  {0x02,  20,  3, false}, // ろ
+  {0x03,  22, 4, false}, // は
+  {0x04, 36,  3, false}, // に
+  {0x05,  29,  4, false}, // ほ
+  {0x06,  24,  3, false}, // へ
+  {0x07,  32, 3, false}, // と
+  {0x08, 34,  4, false}, // ち
+  {0x09,  26,  4, false}  // り
 };
 

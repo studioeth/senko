@@ -1,5 +1,9 @@
 /* 
   oxoxo [zero by zero] Senko for Peggy 2.0, using the Peggy2 library, version 0.2. 
+  DONE 玉の方向、長手方向にいく確率を増やす
+  DONE 玉がぶつかったときの広がりはすくなめ -> spread を変更
+  DONE 玉を生んだ時の広がりは多め' -> spread を変更
+  DONE 玉の生存期間を短く
   http://oxoxo.me
 */
 
@@ -46,7 +50,7 @@ void loop()
     if(sensors[i].isRequested){
       Ball* pBall = createBall(sensors[i].x, sensors[i].y); // might be ignored if no ball is available.
       if(pBall != NULL){
-        fireBright(pBall);
+        fireBright(pBall, sensors[i].x * 2);
       }
       sensors[i].isRequested = false;
     }
@@ -83,7 +87,7 @@ void loop()
       for(int j=i+1; j < MAX_BALL_COUNT; j++){
         if(balls[i].xp == balls[j].xp && balls[i].yp == balls[j].yp
           && balls[i].isActive && balls[j].isActive ){
-          fireBright(&balls[i]);
+          fireBright(&balls[i], DEFAULT_BRIGHT_AGE);
           break;
         }
       }
@@ -116,8 +120,8 @@ void drawScreenSaver(){
     if(brightness >= MAX_BRIGHT_BRIGHTNESS_SLEEP - 1){
        shouldFadeInLoad = false;
     }
-    for(unsigned short x=0; x < NUM_OF_X; x++){
-      for(unsigned short y=0; y < NUM_OF_Y; y++){
+    for(byte x=0; x < NUM_OF_X; x++){
+      for(byte y=0; y < NUM_OF_Y; y++){
         if(!shouldFadeInLoad && (x == 7 || y == 7 || x == 8 || y == 8)){
           setPointWithBrightness(x,y,MAX_BRIGHT_BRIGHTNESS_SLEEP);
         }else{
@@ -132,14 +136,18 @@ void drawScreenSaver(){
 void drawBright(){
   for(int i= 0; i < MAX_BRIGHT_COUNT; i++){
     if(brights[i].isActive){
-      int brightness = calcBallBrightnessFromAge(brights[i].age, MAX_BRIGHT_BRIGHTNESS, MAX_BRIGHT_AGE);
+      int brightness = calcBallBrightnessFromAge(brights[i].age, MAX_BRIGHT_BRIGHTNESS, MAX_BALL_AGE);
       setPointWithBrightness(brights[i].xp, brights[i].yp, brightness); 
       brights[i].age++;
-      if(brights[i].age < NUM_OF_X){
-        drawCircle(brights[i].xp, brights[i].yp, brights[i].age, brightness);
+      int currentSpread = brights[i].age;
+      if(currentSpread > brights[i].xp && currentSpread < brights[i].spread){
+        currentSpread = brights[i].xp * 2 - currentSpread; // ちょっと手前で折り返す
+      }
+      if(currentSpread < NUM_OF_X){
+        drawCircle(brights[i].xp, brights[i].yp, currentSpread, MAX_BRIGHT_BRIGHTNESS);
       }
     }
-    if(brights[i].age > MAX_BRIGHT_AGE){
+    if(brights[i].age > brights[i].spread){
       // delete Bright.
       brights[i].isActive = false;
       brights[i].age = 0;
@@ -155,7 +163,7 @@ struct Ball* createBall(uint8_t x, uint8_t y){
     }
     
     //Set first velocity
-    pBall->vx = ( MAX_VELOCITY * random(-100, 100)) / 100.0;
+    pBall->vx = ( MAX_VELOCITY * random(80, 100)) / 100.0;
     int vec = random(0, 1);
     if(vec == 0){
       vec = -1;
@@ -257,13 +265,14 @@ void updateBall(struct Ball* pBall){
 
 }
 
-void fireBright(struct Ball* pBall){
+void fireBright(struct Ball* pBall, int spread){
   for(int i= 0; i < MAX_BRIGHT_COUNT; i++){
     if(!brights[i].isActive){
        brights[i].xp = pBall->xp;
        brights[i].yp = pBall->yp;
        brights[i].isActive = true;
        brights[i].age = 0;
+       brights[i].spread = spread;
        break;
     }
   }
@@ -276,9 +285,9 @@ void clearFrames(){
   }
 }
 
-void setPointWithBrightness(unsigned short xIn, unsigned short yIn, unsigned short brightness){
+void setPointWithBrightness(byte xIn, byte yIn, byte brightness){
  
-  unsigned short x,y;
+  byte x,y;
   if(xIn >= NUM_OF_X || yIn >= NUM_OF_Y){
     return;
   }
@@ -326,7 +335,7 @@ void setPointWithBrightness(unsigned short xIn, unsigned short yIn, unsigned sho
 
 void refreshAll(){
   
-  unsigned short reps = 0;  
+  byte reps = 0;  
   while (reps < repNumber)
   {
     if(NORMALMODE){
