@@ -8,10 +8,10 @@
 #define NUM_OF_Y 8
 #define X_AXIS_OFFSET 4
 #define Y_AXIS_OFFSET 4
-#define MODERATION_RATIO 0.92
 
-#define MAX_BALL_COUNT 16
-#define MAX_BALL_AGE 400 // TODO
+#define MAX_BALL_COUNT 12
+#define MODERATION_RATIO 0.96 // TODO
+#define MAX_BALL_AGE 500 // TODO
 #define DEFAULT_BRIGHT_AGE 25 //TODO
 #define MAX_BALL_BRIGHTNESS 50
 
@@ -22,7 +22,7 @@
 #define NUM_OF_FRAMES 6
 #define NUM_OF_SENSOR 9
 
-#define SCREEN_SAVER_START_MSEC 25000  // screen saver will be shown if there is no activity after specified seconds later.
+#define SCREEN_SAVER_START_MSEC 5000  // screen saver will be shown if there is no activity after specified seconds later.
 
 Peggy2 frames[NUM_OF_FRAMES];     // Make a frame buffer object, called frames[0] 
 
@@ -46,28 +46,26 @@ struct Ball {
       float vy;
       float vx;
       bool isActive;
-      uint8_t yp;
-      uint8_t xp;
+      uint8_t yp[3];
+      uint8_t xp[3];
       int age;
     };
 
 Ball balls [MAX_BALL_COUNT] = { 
-  {0,0,0,0,false,0,0,0},
-  {0,0,0,0,false,0,0,0},
-  {0,0,0,0,false,0,0,0},
-  {0,0,0,0,false,0,0,0},
-  {0,0,0,0,false,0,0,0},
-  {0,0,0,0,false,0,0,0},
-  {0,0,0,0,false,0,0,0},
-  {0,0,0,0,false,0,0,0},
-  {0,0,0,0,false,0,0,0},
-  {0,0,0,0,false,0,0,0},
-  {0,0,0,0,false,0,0,0},
-  {0,0,0,0,false,0,0,0},
-  {0,0,0,0,false,0,0,0},
-  {0,0,0,0,false,0,0,0},
-  {0,0,0,0,false,0,0,0},
-  {0,0,0,0,false,0,0,0}
+  {0,0,0,0,false,{-1,-1,-1},{-1,-1,-1},0},
+  {0,0,0,0,false,{-1,-1,-1},{-1,-1,-1},0},
+  {0,0,0,0,false,{-1,-1,-1},{-1,-1,-1},0},
+  {0,0,0,0,false,{-1,-1,-1},{-1,-1,-1},0},
+  
+  {0,0,0,0,false,{-1,-1,-1},{-1,-1,-1},0},
+  {0,0,0,0,false,{-1,-1,-1},{-1,-1,-1},0},
+  {0,0,0,0,false,{-1,-1,-1},{-1,-1,-1},0},
+  {0,0,0,0,false,{-1,-1,-1},{-1,-1,-1},0},
+  
+  {0,0,0,0,false,{-1,-1,-1},{-1,-1,-1},0},
+  {0,0,0,0,false,{-1,-1,-1},{-1,-1,-1},0},
+  {0,0,0,0,false,{-1,-1,-1},{-1,-1,-1},0},
+  {0,0,0,0,false,{-1,-1,-1},{-1,-1,-1},0}
 };
 
 Bright brights [MAX_BRIGHT_COUNT] = { 

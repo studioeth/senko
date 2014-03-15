@@ -51,7 +51,7 @@ void loop()
       Ball* pBall = createBall(sensors[i].x, sensors[i].y); // might be ignored if no ball is available.
       if(pBall != NULL){
         //fireBright(pBall, sensors[i].x * 2, true);
-        fireBright(pBall, 5, true);
+        fireBright(pBall, DEFAULT_BRIGHT_AGE, true);
       }
       sensors[i].isRequested = false;
     }
@@ -84,7 +84,7 @@ void loop()
     
     for(int i=0; i < MAX_BALL_COUNT; i++){
       for(int j=i+1; j < MAX_BALL_COUNT; j++){
-        if(balls[i].xp == balls[j].xp && balls[i].yp == balls[j].yp
+        if(balls[i].xp[0] == balls[j].xp[0] && balls[i].yp[0] == balls[j].yp[0]
           && balls[i].isActive && balls[j].isActive ){
           //TODO ball age
           float power = (MAX_BALL_AGE * 2 - balls[i].age - balls[j].age) / (float)(MAX_BALL_AGE * 2);
@@ -118,6 +118,10 @@ unsigned short x2 = 20;
 unsigned short y2 = 4;    
 
 void drawScreenSaver(){
+  unsigned long sleepDuration = millis() - sleepStartMillis;
+  if(sleepDuration < SCREEN_SAVER_START_MSEC){
+    return;
+  }
   clearFrames();
   showLine(&x1,&y1);
   showLine(&x2,&y2);
@@ -133,9 +137,9 @@ void showLine(unsigned short* px, unsigned short* py){
     }
   }
   setPointWithBrightness((*px), (*py), MAX_BRIGHT_BRIGHTNESS);  
-  setPointWithBrightness((*px)-1, (*py), 20);  
-  setPointWithBrightness((*px)-2, (*py), 10);  
-  setPointWithBrightness((*px)-3, (*py), 5);  
+  setPointWithBrightness((*px)-1, (*py), 15);  
+  setPointWithBrightness((*px)-2, (*py), 8);  
+  setPointWithBrightness((*px)-3, (*py), 3);  
   setPointWithBrightness((*px)-4, (*py), 1);  
 
 }
@@ -208,8 +212,8 @@ struct Ball* createBall(uint8_t x, uint8_t y){
     //pBall->y = random(NUM_OF_X);   // Initial position: up to NUM_OF_X - 1.
     pBall->x = x;
     pBall->y = y;
-    pBall->xp = (uint8_t) round(pBall->x);
-    pBall->yp = (uint8_t) round(pBall->y);
+    (pBall->xp)[0] = (uint8_t) round(pBall->x);
+    (pBall->yp)[0] = (uint8_t) round(pBall->y);
   
     pBall->isActive = true;  
     return pBall;
@@ -233,12 +237,17 @@ void drawBall(struct Ball* pBall){
   if(!pBall->isActive) return;
 
   //Next, figure out which point we're going to draw. 
-  pBall->xp = (uint8_t) round(pBall->x);
-  pBall->yp = (uint8_t) round(pBall->y);
-  
+  for(int j=2; j>0; j--){
+    (pBall->xp)[j] = (pBall->xp)[j-1];
+    (pBall->yp)[j] = (pBall->yp)[j-1];
+  }
+  (pBall->xp)[0] = (uint8_t) round(pBall->x);
+  (pBall->yp)[0] = (uint8_t) round(pBall->y);
   // Write the point to the buffer
   int brightness = calcBallBrightnessFromAge(pBall->age, MAX_BALL_BRIGHTNESS, MAX_BALL_AGE);
-  setPointWithBrightness(pBall->xp , pBall->yp, brightness);  
+  setPointWithBrightness((pBall->xp)[0] , (pBall->yp)[0], brightness);  
+  setPointWithBrightness((pBall->xp)[1] , (pBall->yp)[1], brightness * 0.3);  
+  setPointWithBrightness((pBall->xp)[2] , (pBall->yp)[2], brightness * 0.1);  
 }
 
 int calcBallBrightnessFromAge(int age, int maxBrightness, int maxAge){
@@ -302,8 +311,10 @@ void updateBall(struct Ball* pBall){
 void fireBright(struct Ball* pBall, int spreadMax, bool isOneWay){
   for(int i= 0; i < MAX_BRIGHT_COUNT; i++){
     if(!brights[i].isActive){
-       brights[i].xp = pBall->xp;
-       brights[i].yp = pBall->yp;
+      //for(int j=0; j<3; i++){
+         brights[i].xp = (pBall->xp)[0];
+         brights[i].yp = (pBall->yp)[0];
+      //}
        brights[i].isActive = true;
        brights[i].age = 0;
        brights[i].spreadMax = spreadMax;
@@ -323,6 +334,9 @@ void clearFrames(){
 void setPointWithBrightness(byte xIn, byte yIn, byte brightness){
  
   byte x,y;
+  if(xIn < 0 || yIn < 0){
+    return;
+  }
   if(xIn >= NUM_OF_X || yIn >= NUM_OF_Y){
     return;
   }
