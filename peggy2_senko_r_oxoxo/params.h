@@ -1,10 +1,10 @@
-#define DEBUG 0 // 1 true / 0 false
+#define DEBUG 0// 1 true / 0 false
 #define NORMALMODE 0 // NORMALMODE uses RefreshAll() 
 #define byte uint8_t
 
-#define MAX_VELOCITY 2 // initial speed of the ball. 
+#define MAX_VELOCITY 1 // initial speed of the ball. 
 #define DISAPPEAR_THRESHOLD 0.01
-#define NUM_OF_X 41
+#define NUM_OF_X 16 // RAN 41
 #define NUM_OF_Y 8
 #define X_AXIS_OFFSET 4
 #define Y_AXIS_OFFSET 4
@@ -12,8 +12,8 @@
 #define MAX_BALL_COUNT 12
 #define MODERATION_RATIO 0.96 // TODO
 #define MAX_BALL_AGE 500 // TODO
-#define DEFAULT_BRIGHT_AGE 25 //TODO
-#define MAX_BALL_BRIGHTNESS 50
+#define DEFAULT_BRIGHT_AGE 70 //TODO2
+#define MAX_BALL_BRIGHTNESS 63
 
 #define MAX_BRIGHT_BRIGHTNESS 63 // depending on RefleshAll() 
 #define MAX_BRIGHT_BRIGHTNESS_SLEEP 32
@@ -88,14 +88,15 @@ struct Sensor {
 
 Sensor sensors[NUM_OF_SENSOR] = {
   //      y    x
-  {0x01,  28,  3, false}, // い
-  {0x02,  20,  3, false}, // ろ
+//  {0x01,  28,  4, false}, // い
+  {0x01,  3,  3, false}, // い RAN
+  {0x02,  20,  4, false}, // ろ
   {0x03,  22, 4, false}, // は
-  {0x04, 36,  3, false}, // に
+  {0x04, 34,  4, false}, // に
   {0x05,  29,  4, false}, // ほ
-  {0x06,  24,  3, false}, // へ
-  {0x07,  32, 3, false}, // と
-  {0x08, 34,  4, false}, // ち
-  {0x09,  26,  4, false}  // り
+  {0x06,  23,  4, false}, // へ
+  {0x07,  31, 4, false}, // と
+  {0x08, 32,  4, false}, // ち
+  {0x09,  25,  4, false}  // り
 };
 

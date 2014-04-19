@@ -36,6 +36,10 @@ void receiveEvent(int howMany)
     for(int i=0; i < NUM_OF_SENSOR; i++){
       if(sensors[i].id == sensorId){
         sensors[i].isRequested = true;
+        if(DEBUG){
+          Serial.print("The number is ");
+          Serial.print(i);
+        }
         break;
       }
     }
@@ -137,10 +141,10 @@ void showLine(unsigned short* px, unsigned short* py){
     }
   }
   setPointWithBrightness((*px), (*py), MAX_BRIGHT_BRIGHTNESS);  
-  setPointWithBrightness((*px)-1, (*py), 15);  
-  setPointWithBrightness((*px)-2, (*py), 8);  
-  setPointWithBrightness((*px)-3, (*py), 3);  
-  setPointWithBrightness((*px)-4, (*py), 1);  
+  setPointWithBrightness((*px)-1, (*py), 15);  // 1/4
+  setPointWithBrightness((*px)-2, (*py), 8);  // 1/8
+  setPointWithBrightness((*px)-3, (*py), 3);  // 1/15
+  setPointWithBrightness((*px)-4, (*py), 1);  // 1/64
 
 }
 
@@ -172,6 +176,11 @@ void drawBright(){
       int currentSpread = brights[i].age;
       int brightness = calcBallBrightnessFromAge(currentSpread, MAX_BRIGHT_BRIGHTNESS, brights[i].spreadMax);
       setPointWithBrightness(brights[i].xp, brights[i].yp, brightness); 
+      setPointWithBrightness(brights[i].xp+1, brights[i].yp, brightness/2); 
+      setPointWithBrightness(brights[i].xp-1, brights[i].yp, brightness/2); 
+      setPointWithBrightness(brights[i].xp, brights[i].yp+1, brightness/2); 
+      setPointWithBrightness(brights[i].xp, brights[i].yp-1, brightness/2); 
+
       brights[i].age++;
       if(brights[i].isOneWay){
       }else{
@@ -182,6 +191,11 @@ void drawBright(){
         brightness = calcBallBrightnessFromAge(currentSpread, MAX_BRIGHT_BRIGHTNESS, DEFAULT_BRIGHT_AGE);
       }
       if(currentSpread < NUM_OF_X){
+        drawCircle(brights[i].xp, brights[i].yp, currentSpread-5, 1);
+        drawCircle(brights[i].xp, brights[i].yp, currentSpread-4, 3);
+        drawCircle(brights[i].xp, brights[i].yp, currentSpread-3, brightness/9);
+        drawCircle(brights[i].xp, brights[i].yp, currentSpread-2, brightness/7);
+        drawCircle(brights[i].xp, brights[i].yp, currentSpread-1, brightness/5);
         drawCircle(brights[i].xp, brights[i].yp, currentSpread, brightness);
       }
     }
@@ -201,7 +215,8 @@ struct Ball* createBall(uint8_t x, uint8_t y){
     }
     
     //Set first velocity
-    pBall->vx = ( MAX_VELOCITY * random(-100, 100)) / 100.0;
+    //pBall->vx = ( MAX_VELOCITY * cos(random(-100, 100)) / 100.0; 
+    pBall->vx = sin(random(0,235)/100.0);
     int vec = random(0, 1);
     if(vec == 0){
       vec = -1;
@@ -237,6 +252,8 @@ void drawBall(struct Ball* pBall){
   if(!pBall->isActive) return;
 
   //Next, figure out which point we're going to draw. 
+  int ball3x = (pBall->xp)[2];
+  int ball3y = (pBall->yp)[2];
   for(int j=2; j>0; j--){
     (pBall->xp)[j] = (pBall->xp)[j-1];
     (pBall->yp)[j] = (pBall->yp)[j-1];
@@ -246,8 +263,9 @@ void drawBall(struct Ball* pBall){
   // Write the point to the buffer
   int brightness = calcBallBrightnessFromAge(pBall->age, MAX_BALL_BRIGHTNESS, MAX_BALL_AGE);
   setPointWithBrightness((pBall->xp)[0] , (pBall->yp)[0], brightness);  
-  setPointWithBrightness((pBall->xp)[1] , (pBall->yp)[1], brightness * 0.3);  
-  setPointWithBrightness((pBall->xp)[2] , (pBall->yp)[2], brightness * 0.1);  
+  setPointWithBrightness((pBall->xp)[1] , (pBall->yp)[1], brightness / 3);
+  setPointWithBrightness((pBall->xp)[2] , (pBall->yp)[2], brightness / 6);
+  setPointWithBrightness(ball3x, ball3y, 2);  
 }
 
 int calcBallBrightnessFromAge(int age, int maxBrightness, int maxAge){
@@ -347,9 +365,11 @@ void setPointWithBrightness(byte xIn, byte yIn, byte brightness){
   }else {
     return;
   }
-  y = pt.x;
-  x = pt.y;
-
+//  y = pt.x; // RAN
+//  x = pt.y; // RAN
+  y = yIn;
+  x = xIn;
+  /*
   if(DEBUG){
     Serial.print("\n xIn: ");
     Serial.print(xIn);
@@ -360,6 +380,7 @@ void setPointWithBrightness(byte xIn, byte yIn, byte brightness){
     Serial.print("   y: ");
     Serial.print(y);
   }
+  */
 
   x += X_AXIS_OFFSET;
   y += Y_AXIS_OFFSET;
@@ -408,7 +429,7 @@ void drawCircle(int8_t xCenter, int8_t yCenter, int8_t radius, int brightness){
   int8_t y = radius;
   int8_t p = (5 - radius*4)/4;
   drawCirclePoint(xCenter, yCenter, x, y, brightness);
-
+ 
   while (x < y){
     x++;
     if (p < 0){
