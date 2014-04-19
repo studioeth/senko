@@ -1,9 +1,5 @@
 /* 
   oxoxo [zero by zero] Senko for Peggy 2.0, using the Peggy2 library, version 0.2. 
-  DONE 玉の方向、長手方向にいく確率を増やす
-  DONE 玉がぶつかったときの広がりはすくなめ -> spread を変更
-  DONE 玉を生んだ時の広がりは多め' -> spread を変更
-  DONE 玉の生存期間を短く
   http://oxoxo.me
 */
 
@@ -23,23 +19,24 @@ void setup()
   Wire.begin(2);        // join i2c bus (address optional for master)
   Wire.onReceive(receiveEvent); // register event
 
-   if(DEBUG){
+   //if(DEBUG){
      //Serial.begin(19200);
-   }
+   //}
 }
 
 void receiveEvent(int howMany)
 {
+  Serial.println("receiveEvent");
   while(Wire.available()){
     byte sensorId = Wire.read();
 
     for(int i=0; i < NUM_OF_SENSOR; i++){
       if(sensors[i].id == sensorId){
         sensors[i].isRequested = true;
-        if(DEBUG){
-          Serial.print("The number is ");
-          Serial.print(i);
-        }
+        //if(DEBUG){
+          //Serial.print("The number is ");
+          //Serial.print(i);
+        //}
         break;
       }
     }
@@ -65,7 +62,6 @@ void loop()
     updateBall(&balls[i]);
   }
   if(isSleep()){
-  //if(true){
     if(!isSleepMode){
       // start Sleeping
       isSleepMode = true;
@@ -84,7 +80,6 @@ void loop()
     for(int i=0; i < MAX_BALL_COUNT; i++){
       drawBall(&balls[i]);
     }
-    
     
     for(int i=0; i < MAX_BALL_COUNT; i++){
       for(int j=i+1; j < MAX_BALL_COUNT; j++){
@@ -141,7 +136,7 @@ void showLine(unsigned short* px, unsigned short* py){
     }
   }
   setPointWithBrightness((*px), (*py), MAX_BRIGHT_BRIGHTNESS);  
-  setPointWithBrightness((*px)-1, (*py), 15);  // 1/4
+  setPointWithBrightness((*px)-1, (*py), 15); // 1/4
   setPointWithBrightness((*px)-2, (*py), 8);  // 1/8
   setPointWithBrightness((*px)-3, (*py), 3);  // 1/15
   setPointWithBrightness((*px)-4, (*py), 1);  // 1/64
@@ -190,12 +185,11 @@ void drawBright(){
         //brightness = MAX_BRIGHT_BRIGHTNESS;
         brightness = calcBallBrightnessFromAge(currentSpread, MAX_BRIGHT_BRIGHTNESS, DEFAULT_BRIGHT_AGE);
       }
-      if(currentSpread < NUM_OF_X){
-        drawCircle(brights[i].xp, brights[i].yp, currentSpread-5, 1);
-        drawCircle(brights[i].xp, brights[i].yp, currentSpread-4, 3);
-        drawCircle(brights[i].xp, brights[i].yp, currentSpread-3, brightness/9);
-        drawCircle(brights[i].xp, brights[i].yp, currentSpread-2, brightness/7);
-        drawCircle(brights[i].xp, brights[i].yp, currentSpread-1, brightness/5);
+      if(currentSpread < NUM_OF_X + 4){
+        drawCircle(brights[i].xp, brights[i].yp, currentSpread-4, 1);
+        drawCircle(brights[i].xp, brights[i].yp, currentSpread-3, 3);
+        drawCircle(brights[i].xp, brights[i].yp, currentSpread-2, brightness/8);
+        drawCircle(brights[i].xp, brights[i].yp, currentSpread-1, brightness/6);
         drawCircle(brights[i].xp, brights[i].yp, currentSpread, brightness);
       }
     }
@@ -216,7 +210,7 @@ struct Ball* createBall(uint8_t x, uint8_t y){
     
     //Set first velocity
     //pBall->vx = ( MAX_VELOCITY * cos(random(-100, 100)) / 100.0; 
-    pBall->vx = sin(random(0,235)/100.0);
+    pBall->vx = sin(random(120,220)/100.0) * -1;
     int vec = random(0, 1);
     if(vec == 0){
       vec = -1;

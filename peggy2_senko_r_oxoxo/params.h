@@ -12,7 +12,7 @@
 #define MAX_BALL_COUNT 12
 #define MODERATION_RATIO 0.96 // TODO
 #define MAX_BALL_AGE 500 // TODO
-#define DEFAULT_BRIGHT_AGE 70 //TODO2
+#define DEFAULT_BRIGHT_AGE 60 //TODO2
 #define MAX_BALL_BRIGHTNESS 63
 
 #define MAX_BRIGHT_BRIGHTNESS 63 // depending on RefleshAll() 
@@ -89,7 +89,7 @@ struct Sensor {
 Sensor sensors[NUM_OF_SENSOR] = {
   //      y    x
   {0x01,  28,  4, false}, // い
-//  {0x01,  3,  3, false}, // い RAN
+//  {0x01,  7,  4, false}, // い RAN
   {0x02,  20,  4, false}, // ろ
   {0x03,  22, 4, false}, // は
   {0x04, 34,  4, false}, // に
