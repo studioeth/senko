@@ -4,7 +4,7 @@
 
 #define MAX_VELOCITY 1 // initial speed of the ball. 
 #define DISAPPEAR_THRESHOLD 0.01
-#define NUM_OF_X 16 // RAN 41
+#define NUM_OF_X 41 // RAN 41
 #define NUM_OF_Y 8
 #define X_AXIS_OFFSET 4
 #define Y_AXIS_OFFSET 4
@@ -88,8 +88,8 @@ struct Sensor {
 
 Sensor sensors[NUM_OF_SENSOR] = {
   //      y    x
-//  {0x01,  28,  4, false}, // い
-  {0x01,  3,  3, false}, // い RAN
+  {0x01,  28,  4, false}, // い
+//  {0x01,  3,  3, false}, // い RAN
   {0x02,  20,  4, false}, // ろ
   {0x03,  22, 4, false}, // は
   {0x04, 34,  4, false}, // に

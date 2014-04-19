@@ -365,10 +365,10 @@ void setPointWithBrightness(byte xIn, byte yIn, byte brightness){
   }else {
     return;
   }
-//  y = pt.x; // RAN
-//  x = pt.y; // RAN
-  y = yIn;
-  x = xIn;
+  y = pt.x; // RAN
+  x = pt.y; // RAN
+//  y = yIn;
+//  x = xIn;
   /*
   if(DEBUG){
     Serial.print("\n xIn: ");
