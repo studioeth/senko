@@ -26,7 +26,7 @@ void setup()
 
 void receiveEvent(int howMany)
 {
-  Serial.println("receiveEvent");
+  //Serial.println("receiveEvent");
   while(Wire.available()){
     byte sensorId = Wire.read();
 
@@ -361,8 +361,8 @@ void setPointWithBrightness(byte xIn, byte yIn, byte brightness){
   }
   y = pt.x; // RAN
   x = pt.y; // RAN
-//  y = yIn;
-//  x = xIn;
+  //y = yIn;
+  //x = xIn;
   /*
   if(DEBUG){
     Serial.print("\n xIn: ");
